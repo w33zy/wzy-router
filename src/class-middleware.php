@@ -35,9 +35,9 @@ abstract class Middleware {
 	 *
 	 * @param  Request
 	 *
-	 * @return void
+	 * @return mixed
 	 */
-	public function next( Request $request ): void {
+	public function next( Request $request ) {
 		$this->router->next( $request, $this->router, $this->store );
 	}
 
