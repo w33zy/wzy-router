@@ -1,27 +1,29 @@
 <?php
 
-abstract class WP_Middleware {
+namespace wzy\Src;
+
+abstract class Middleware {
 
 	/**
-	 * @var WP_Router
+	 * @var Router
 	 */
-	protected $router;
+	protected Router $router;
 
 	/**
 	 * @var array
 	 */
-	protected $store;
+	protected array $store;
 
 	/**
 	 * Called by WP_Router to run Middleware.
 	 *
-	 * @param  WP_Request
-	 * @param  WP_Router
+	 * @param  Request
+	 * @param  Router
 	 * @param  array
+	 *
 	 * @return mixed
 	 */
-	public function run( WP_Request $request, WP_Router $router, $store )
-	{
+	public function run( Request $request, Router $router, $store )	{
 		$this->router = $router;
 		$this->store  = $store;
 
@@ -31,19 +33,20 @@ abstract class WP_Middleware {
 	/**
 	 * Calls the next Middleware.
 	 *
-	 * @param  WP_Request
+	 * @param  Request
+	 *
 	 * @return void
 	 */
-	public function next( WP_Request $request )
-	{
+	public function next( Request $request ): void {
 		$this->router->next( $request, $this->router, $this->store );
 	}
 
 	/**
 	 * Method to be implemented by each Middleware.
 	 *
-	 * @param  WP_Request
+	 * @param  Request
+	 *
 	 * @return mixed
 	 */
-	abstract function handle( WP_Request $request );
+	abstract public function handle( Request $request );
 }

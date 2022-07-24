@@ -1,13 +1,15 @@
 <?php
 
-class WP_Response {
+namespace wzy\Src;
+
+class Response {
 
 	/**
 	 * List of messages related to their codes.
 	 *
 	 * @var array
 	 */
-	protected $http_statuses = array(
+	protected array $http_statuses = array(
         100 => 'Continue',
         101 => 'Switching Protocols',
         102 => 'Processing',            // RFC2518
@@ -75,7 +77,7 @@ class WP_Response {
 	 *
 	 * @var string
 	 */
-    protected $data;
+    protected string $data;
 
     /**
      * Status code
@@ -98,20 +100,18 @@ class WP_Response {
      * @param integer
      * @param array
      */
-    public function __construct( $data, $status = 200, $headers = array() )
-    {
+    public function __construct( $data, $status = 200, $headers = [] ) {
     	$this->set_data( $data );
 		$this->status  = $status;
 		$this->headers = $headers;
     }
 
     /**
-     * Called when user returns WP_Response
+     * Called when user returns \wzy\Response
      *
      * @return string
      */
-    public function __toString()
-    {
+    public function __toString() {
     	$this->set_http_status( $this->status );
     	$this->set_headers( $this->headers );
 
@@ -123,8 +123,7 @@ class WP_Response {
      *
      * @return string
      */
-    public function get()
-    {
+    public function get(): string {
     	return $this->data;
     }
 
@@ -133,12 +132,12 @@ class WP_Response {
      *
      * @param mixed
      */
-    protected function set_data( $data )
-    {
-		if ( $data !== null
-			&& !is_string( $data )
-			&& !is_numeric( $data )
-			&& !is_callable( array($data, '__toString') ) )
+    protected function set_data( $data ): void {
+		if (
+			$data !== null
+			&& ! is_string( $data )
+			&& ! is_numeric( $data )
+			&& ! is_callable( array($data, '__toString') ) )
 		{
 			throw new \UnexpectedValueException( sprintf('The Response data must be a string or object implementing __toString(), "%s" given.', gettype( $data ) ) );
         }
@@ -151,10 +150,8 @@ class WP_Response {
      *
      * @param array
      */
-    protected function set_headers( $headers )
-    {
-    	foreach ( $headers as $header )
-    	{
+    protected function set_headers( $headers ): void {
+    	foreach ( $headers as $header )	{
     		header( $header );
     	}
     }
@@ -164,17 +161,10 @@ class WP_Response {
      *
      * @param integer
      */
-    protected function set_http_status( $code = 200 )
-    {
-    	$protocal = 'HTTP/1.0';
+    protected function set_http_status( $code = 200 ): void {
+	    $protocol = $_SERVER['SERVER_PROTOCOL'] ?? 'HTTP/1.0';
+	    $message = $this->http_statuses[$code];
 
-    	if ( isset( $_SERVER['SERVER_PROTOCOL'] ) )
-    	{
-    		$protocal = $_SERVER['SERVER_PROTOCOL'];
-    	}
-
-    	$message = $this->http_statuses[$code];
-
-    	header( "{$protocal} {$code} {$message}" );
+    	header( "{$protocol} {$code} {$message}" );
     }
 }

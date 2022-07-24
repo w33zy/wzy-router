@@ -1,7 +1,7 @@
 <?php
 /**
  * @wordpress-plugin
- * Plugin Name:       WP Router
+ * Plugin Name:       wzy Router
  * Plugin URI:        http://wp-router.org/
  * Description:       A router for WordPress.
  * Version:           1.0.0
@@ -10,15 +10,29 @@
  * License:           GPL2+
  */
 
-require_once __DIR__ . '/src/class-wp-request.php';
-require_once __DIR__ . '/src/class-wp-middleware.php';
-require_once __DIR__ . '/src/class-wp-response.php';
-require_once __DIR__ . '/src/class-wp-router.php';
+namespace wzy;
 
-require_once __DIR__ . '/src/responses/class-wp-json-response.php';
-require_once __DIR__ . '/src/responses/class-wp-template-response.php';
-require_once __DIR__ . '/src/responses/class-wp-redirect-response.php';
+/**
+ * Autoload Classes
+ */
+require_once __DIR__ . '/inc/libraries/autoloader.php';
 
-global $wp_router;
 
-$wp_router = new WP_Router;
+global $wzy_router;
+$wzy_router = new \wzy\Src\Router;
+
+$wzy_router->get( array(
+	'as'   => 'getRoute',
+	'uri'  => '/simple',
+	'uses' => static function()	{
+		return 'A get request';
+	}
+) );
+
+$wzy_router->post( array(
+	'as'   => 'postRoute',
+	'uri'  => '/simple',
+	'uses' => static function() use ( $wzy_router ) {
+		return 'A post request';
+	}
+) );
